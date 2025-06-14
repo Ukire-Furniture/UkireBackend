@@ -2,35 +2,37 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\ProductApiController; // Impor ProductApiController
-use App\Http\Controllers\Api\CategoryApiController; // Impor CategoryApiController
+use App\Http\Controllers\Api\CategoryApiController;
+use App\Http\Controllers\Api\ProductApiController;
+use App\Http\Controllers\Api\AuthController;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
 |
-| Di sini tempat yang bisa mendaftarkan rute API untuk aplikasi.
+| Di sini tempat kamu bisa mendaftarkan rute API untuk aplikasimu.
 | Rute-rute ini dimuat oleh RouteServiceProvider dalam grup yang berisi
-| middleware "api". 
+| middleware "api". Nikmati membangun API kamu!
 |
 */
 
-// rute api buat kategori produk
-// metode get untuk mengambil daftar kategori
-Route::get('/categories', [CategoryApiController::class, 'index']);
+// Rute Autentikasi (Publik)
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-// rute api buat produk
-// metode get buat ngambil semua produk
+// Rute Publik untuk Produk dan Kategori
+Route::get('/categories', [CategoryApiController::class, 'index']);
 Route::get('/products', [ProductApiController::class, 'index']);
 Route::get('/products/{id}', [ProductApiController::class, 'show']);
-    
 
-// catetan: secara dafault, rute di 'api.php' udah memiliki prefix '/api/'.
-// jadi, rute '/categories' bakal bisa diakses di '/api/categories'
+// Rute yang Dilindungi oleh Sanctum (Membutuhkan token autentikasi)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', [AuthController::class, 'user']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 
-// untuk rute yang lebih lengkap (post, put, delete, dll),
-// di masa depan bisa menggunakan Route::apiResource()
-// contoh: Route::apiResource('products', ProductApiController::class);
-
-    
+    // Rute API untuk Manajemen Produk
+    Route::post('/products', [ProductApiController::class, 'store']);
+    Route::post('/products/{product}', [ProductApiController::class, 'update']);
+    Route::delete('/products/{product}', [ProductApiController::class, 'destroy']);
+});

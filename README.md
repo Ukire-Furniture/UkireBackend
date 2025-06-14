@@ -1,3 +1,4 @@
+
 # 🪑 UKIRE Backend - Furniture E-Commerce
 
 <!-- Dynamic Badges -->
@@ -216,3 +217,4 @@ Kami sangat terbuka untuk kontribusi! Silakan fork repositori ini dan ajukan *Pu
 © 2025 UKIRE. Hak Cipta Dilindungi Undang-Undang.
 
 Didistribusikan di bawah Lisensi MIT. Lihat `LICENSE` untuk informasi lebih lanjut.
+

@@ -12,23 +12,14 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-// use Filament\Forms\Components\TextInput\Mask; // Baris ini tidak lagi diperlukan jika mask dihilangkan
 
 class ProductResource extends Resource
 {
-    // Model terkait untuk resource ini
     protected static ?string $model = Product::class;
-
-    // Ikon untuk navigasi di sidebar Filament
     protected static ?string $navigationIcon = 'heroicon-o-cube';
-    // Label navigasi di sidebar Filament
     protected static ?string $navigationLabel = 'Produk Ukiran';
-    // Grup navigasi
     protected static ?string $navigationGroup = 'Manajemen Toko';
 
-    /**
-     * Mendefinisikan form untuk membuat/mengedit produk.
-     */
     public static function form(Form $form): Form
     {
         return $form
@@ -55,16 +46,8 @@ class ProductResource extends Resource
                         Forms\Components\TextInput::make('price')
                             ->label('Harga')
                             ->required()
-                            ->numeric() // Tetap memastikan input hanya angka
-                            ->prefix('IDR'), // Tetap menampilkan prefiks mata uang
-                            // Bagian mask dihilangkan untuk mengatasi error yang terus-menerus
-                            // ->mask(function (Mask $mask) {
-                            //     return $mask
-                            //         ->numeric()
-                            //         ->thousandsSeparator(',')
-                            //         ->decimalSeparator('.')
-                            //         ->mapToDecimal();
-                            // }),
+                            ->numeric()
+                            ->prefix('IDR'), // Bagian mask dihilangkan
 
                         Forms\Components\TextInput::make('stock')
                             ->label('Stok')
@@ -82,9 +65,6 @@ class ProductResource extends Resource
             ]);
     }
 
-    /**
-     * Mendefinisikan tabel untuk menampilkan daftar produk.
-     */
     public static function table(Table $table): Table
     {
         return $table
@@ -141,9 +121,6 @@ class ProductResource extends Resource
             ]);
     }
 
-    /**
-     * Mendapatkan halaman-halaman terkait untuk resource ini.
-     */
     public static function getPages(): array
     {
         return [

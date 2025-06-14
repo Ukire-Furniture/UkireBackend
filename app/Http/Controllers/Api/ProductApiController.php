@@ -3,60 +3,136 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product; // impor model Product
+use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse; // impor JsonResponse untuk response JSON yang jelas
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 
 class ProductApiController extends Controller
 {
-    /**
-     * mengambil dan mengembalikan daftar semua produk
-     * relasi 'category' dimuat supaya informasi kategori juga ikut terambil
-     * endpoint ini bakal diakses sama frontend buat dapetin daftar produk
-     * 
-     * @return JsonResponse
-     */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        // ngambil semua data produk dari tabel 'products'
-        // 'with('category')' mastiin data kategori terkait juga diambil dalam satu query
-        $products = Product::with('category')->get();
+        $query = Product::with('category');
 
-        // ngembaliin data produk dalam format JSON
-        // status HTTP 200 nunjukin permintaan berhasil
+        if ($request->has('search') && $request->search != '') {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->has('category') && $request->category != '') {
+            $query->whereHas('category', function ($q) use ($request) {
+                $q->where('name', $request->category);
+            });
+        }
+
+        $perPage = $request->get('per_page', 10);
+        $products = $query->paginate($perPage);
+
         return response()->json([
-            'message' => 'Daftar produk Berhasil Diambil',
-            'data' => $products,
+            'message' => 'Daftar produk berhasil diambil.',
+            'data' => $products->items(),
+            'pagination' => [
+                'total' => $products->total(),
+                'per_page' => $products->perPage(),
+                'current_page' => $products->currentPage(),
+                'last_page' => $products->lastPage(),
+                'from' => $products->firstItem(),
+                'to' => $products->lastItem(),
+            ]
         ], 200);
     }
 
-    /**
-     * ngambil dan ngembaliin detail satu produk berdasakan ID
-     * jika produk gak ditemukan, bakal ngembaliin error 404
-     * 
-     * @param int $id ID produk yang dicari
-     * @return JsonResponse
-     */
     public function show(int $id): JsonResponse
     {
-        // nyoba ngambil produk berdasarkan ID
         $product = Product::with('category')->find($id);
 
-        // meriksa apakah data produk ditemuin
-        // kalo produk gak ditemuin, ngembaliin error 404
         if (!$product) {
             return response()->json([
-                'message' => 'Produk tidak ditemukan',
+                'message' => 'Produk tidak ditemukan.'
             ], 404);
         }
 
-        // ngembaliin data produk dalam format JSON
         return response()->json([
-            'message' => 'Detail Produk berhasil diambil',
-            'data' => $product,
+            'message' => 'Detail produk berhasil diambil.',
+            'data' => $product
         ], 200);
     }
 
-    //buat fitur di masa deoan, kayak buat produk baru
-    // edit atau hapus, nah bisa nambahin method lain di sini
+    public function store(Request $request): JsonResponse
+    {
+        $request->validate([
+            'category_id' => ['required', 'exists:categories,id'],
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'stock' => ['required', 'integer', 'min:0'],
+            'image' => ['nullable', 'image', 'max:2048'],
+        ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('product-images', 'public');
+        }
+
+        $product = Product::create([
+            'category_id' => $request->category_id,
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'stock' => $request->stock,
+            'image_path' => $imagePath,
+        ]);
+
+        $product->load('category');
+
+        return response()->json([
+            'message' => 'Produk berhasil ditambahkan.',
+            'data' => $product
+        ], 201);
+    }
+
+    public function update(Request $request, Product $product): JsonResponse
+    {
+        $request->validate([
+            'category_id' => ['sometimes', 'required', 'exists:categories,id'],
+            'name' => ['sometimes', 'required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'price' => ['sometimes', 'required', 'numeric', 'min:0'],
+            'stock' => ['sometimes', 'required', 'integer', 'min:0'],
+            'image' => ['nullable', 'image', 'max:2048'],
+        ]);
+
+        if ($request->hasFile('image')) {
+            if ($product->image_path) {
+                Storage::disk('public')->delete($product->image_path);
+            }
+            $imagePath = $request->file('image')->store('product-images', 'public');
+            $product->image_path = $imagePath;
+        } elseif ($request->has('image_remove')) {
+            if ($product->image_path) {
+                Storage::disk('public')->delete($product->image_path);
+                $product->image_path = null;
+            }
+        }
+
+        $product->update($request->except(['image', 'image_remove']));
+        $product->load('category');
+
+        return response()->json([
+            'message' => 'Produk berhasil diperbarui.',
+            'data' => $product
+        ], 200);
+    }
+
+    public function destroy(Product $product): JsonResponse
+    {
+        if ($product->image_path) {
+            Storage::disk('public')->delete($product->image_path);
+        }
+
+        $product->delete();
+
+        return response()->json([
+            'message' => 'Produk berhasil dihapus.'
+        ], 200);
+    }
 }

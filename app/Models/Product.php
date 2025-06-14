@@ -10,7 +10,6 @@ class Product extends Model
 {
     use HasFactory;
 
-    // Kolom yang dapat diisi secara massal (mass assignable)
     protected $fillable = [
         'category_id',
         'name',
@@ -20,10 +19,6 @@ class Product extends Model
         'image_path',
     ];
 
-    /**
-     * Mendefinisikan relasi 'belongs to' ke model Category.
-     * Sebuah produk dimiliki oleh satu kategori.
-     */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);

@@ -2,7 +2,19 @@
 
 use Illuminate\Support\Facades\Route;
 
-// routes/web.php
-Route::get('/test-route', function () {
-    return 'Hello from Laravel!';
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+Route::get('/', function () {
+    return view('welcome');
 });
+
+// Anda bisa tambahkan rute web lainnya di sini jika diperlukan.
