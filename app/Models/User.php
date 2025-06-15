@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasMany; // <-- Tambahkan ini untuk relasi HasMany
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -35,5 +36,13 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
         return true;
+    }
+
+    /**
+     * Relasi: Satu user memiliki banyak pesanan.
+     */
+    public function orders(): HasMany // <-- Tambahkan metode ini
+    {
+        return $this->hasMany(Order::class);
     }
 }

@@ -19,3 +19,11 @@ class Category extends Model
         return $this->hasMany(Product::class);
     }
 }
+
+/**
+ * category_id:
+ * lemari=2
+ * kursi=3
+ * meja=4
+ * pintu=5
+ */
