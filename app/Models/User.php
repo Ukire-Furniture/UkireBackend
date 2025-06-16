@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\Relations\HasMany; // <-- Tambahkan ini untuk relasi HasMany
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne; // <-- Tambahkan ini untuk relasi HasOne
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -41,8 +42,16 @@ class User extends Authenticatable implements FilamentUser
     /**
      * Relasi: Satu user memiliki banyak pesanan.
      */
-    public function orders(): HasMany // <-- Tambahkan metode ini
+    public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Relasi: Satu user memiliki satu wishlist.
+     */
+    public function wishlist(): HasOne // <-- Tambahkan metode ini
+    {
+        return $this->hasOne(Wishlist::class);
     }
 }
