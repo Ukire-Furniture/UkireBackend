@@ -16,7 +16,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Filament\Support\Colors\Color; // <-- Tambahkan baris ini!
+use Filament\Support\Colors\Color;
 
 class UkirePanelProvider extends PanelProvider
 {
@@ -34,11 +34,11 @@ class UkirePanelProvider extends PanelProvider
     {
         return $panel
             ->default()
-            ->id('ukire') // Pastikan ID panel adalah 'admin'
-            ->path('ukire') // Pastikan path adalah 'admin'
-            ->login() // Mengaktifkan halaman login admin
+            ->id('admin')
+            ->path('admin')
+            ->login()
             ->colors([
-                'primary' => Color::Amber, // Menggunakan Color::Amber karena sudah di-use
+                'primary' => Color::Amber,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

@@ -31,7 +31,7 @@ class ProductSeeder extends Seeder
                 'name' => 'Pintu Gebyok Ukir',
                 'description' => 'Pintu gebyok tradisional dengan ukiran Jawa klasik',
                 'price' => 9800000.00,
-                'stock' => 1,
+                'stock' => 3,
                 'image_path' => 'product-images/pintugebyok1.webp', // Ganti dengan nama file gambar yang sebenarnya
             ],
             [

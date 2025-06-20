@@ -23,6 +23,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'user', // Default role saat registrasi adalah 'user'
         ]);
 
         return response()->json([
@@ -52,15 +53,16 @@ class AuthController extends Controller
             'message' => 'Login berhasil.',
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'user' => $user,
+            'user' => $user->only(['id', 'name', 'email', 'role']), // Kirim role juga
         ], 200);
     }
 
     public function user(Request $request): JsonResponse
     {
+        // Kirim user data lengkap, termasuk role
         return response()->json([
             'message' => 'Data user berhasil diambil.',
-            'user' => $request->user(),
+            'user' => $request->user()->only(['id', 'name', 'email', 'role']),
         ], 200);
     }
 
