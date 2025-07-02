@@ -51,6 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/orders', [OrderApiController::class, 'store']);
     Route::get('/orders', [OrderApiController::class, 'index']);
     Route::get('/orders/{order}', [OrderApiController::class, 'show']);
+    Route::put('/orders/{order}/status', [OrderApiController::class, 'updateStatus']);
 
     // Rute API untuk Wishlist (Tambahkan ini)
     Route::get('/wishlist', [WishlistApiController::class, 'index']); // Mendapatkan isi wishlist
