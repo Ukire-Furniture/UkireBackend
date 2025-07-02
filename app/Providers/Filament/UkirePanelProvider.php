@@ -17,19 +17,10 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Support\Colors\Color;
+use Illuminate\Support\Facades\Blade;
 
 class UkirePanelProvider extends PanelProvider
 {
-    public function register(): void
-    {
-        //
-    }
-
-    public function boot(): void
-    {
-        //
-    }
-
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -37,9 +28,17 @@ class UkirePanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->brandName('UKIRE') // Teks yang akan muncul di header
+            // Menambahkan logo (opsional, jika Anda punya gambar logo di public/)
+            // Pastikan Anda punya gambar logo di public/images/ukire_logo_admin.png
+            ->brandLogo(fn () => Blade::render('<img src="' . asset('images/ukire.png') . '" class="h-8" alt="UKIRE" />'))
+            ->brandLogoHeight('2rem') // Atur tinggi logo
+            // Mengubah warna utama dashboard
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Amber, // Menggunakan warna Amber
             ])
+           
+            ->sidebarCollapsibleOnDesktop()
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -48,7 +47,7 @@ class UkirePanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                // Widgets\FilamentInfoWidget::class, // Bisa dihapus jika tidak ingin info Filament
             ])
             ->middleware([
                 EncryptCookies::class,
