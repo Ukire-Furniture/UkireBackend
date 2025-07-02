@@ -19,7 +19,6 @@ UKIRE Backend adalah tulang punggung dari aplikasi e-commerce furniture ukir **U
 - [Persyaratan Sistem](#-persyaratan-sistem)
 - [Panduan Instalasi](#-panduan-instalasi--menjalankan-lokal)
 - [Mengakses Aplikasi](#️-mengakses-aplikasi)
-- [Status & Masalah Diketahui](#️-status-terkini--masalah-diketahui)
 - [Kontribusi](#-kontribusi)
 - [Lisensi](#️-lisensi)
 
@@ -81,18 +80,7 @@ cd UkireBackend
 
 #### 3. Instal Dependensi Composer
 
-Untuk memastikan instalasi yang bersih, hapus direktori `vendor` dan file `composer.lock` jika ada.
-
-```bash
-# Untuk Windows (Command Prompt)
-rmdir /s /q vendor
-del composer.lock
-
-# atau untuk Git Bash / WSL / Linux / macOS
-rm -rf vendor && rm composer.lock
-```
-
-Kemudian, instal ulang semua dependensi:
+Instal semua dependensi:
 
 ```bash
 composer install
@@ -133,24 +121,17 @@ Jika Anda mengalami error ini saat migrasi:
 
 #### 6. Buat Database MySQL
 
-Pastikan Anda sudah membuat database bernama `ukire_db` di server MySQL Anda (misalnya melalui MySQL Workbench atau HeidiSQL di Laragon).
+Pastikan Anda sudah membuat database `ukire` di server MySQL Anda (misalnya melalui MySQL Workbench atau HeidiSQL di Laragon atau juga phpmyadmin di XAMPP).
 
 #### 7. Jalankan Migrasi Database
 
 Perintah ini akan menghapus semua tabel lama (jika ada) dan membuat struktur tabel baru dari file migrasi.
 
 ```bash
-php artisan migrate:fresh
+php artisan migrate:fresh --seed
 ```
 
-#### 8. Buat Pengguna Admin Filament
-
-```bash
-php artisan make:filament-user
-```
-Ikuti instruksi di terminal untuk membuat user admin (email dan password ini akan digunakan untuk login ke dashboard).
-
-#### 9. Bersihkan Cache
+#### 8. Bersihkan Cache
 
 Untuk memastikan semua konfigurasi baru termuat dengan benar:
 
@@ -159,7 +140,7 @@ php artisan optimize:clear
 composer dump-autoload
 ```
 
-#### 10. Jalankan Server
+#### 9. Jalankan Server
 
 -   **Opsi 1: Menggunakan Laragon (Direkomendasikan)**
     Jika Apache/Nginx sudah berjalan di Laragon, Anda bisa langsung mengakses aplikasi melalui domain virtual host yang Anda atur.
@@ -168,35 +149,23 @@ composer dump-autoload
     Pastikan Apache/Nginx di Laragon sudah di-**STOP**.
 
     ```bash
-    php artisan serve --port=8000
+    php artisan serve 
     ```
 
 ---
 
 ## 🖥️ Mengakses Aplikasi
 
-#### Dashboard Admin Filament
+#### WEB UKIRE
 
-- **Via Laragon**: `http://ukirebackend.test/admin`
-- **Via `php artisan serve`**: `http://127.0.0.1:8000/admin` (sesuaikan port jika Anda menggunakan port lain)
+- **Via Laragon**: `http://ukirebackend.test`
+- **Via `php artisan serve`**: `http://127.0.0.1:8000` (sesuaikan port jika Anda menggunakan port lain)
 
 Login dengan email dan password yang Anda buat pada langkah 8.
 
-#### Endpoint API Dasar
+#### DASHBOARD ADMIN
 
-- **Daftar Kategori**: `http://ukirebackend.test/api/categories`
-- **Daftar Produk**: `http://ukirebackend.test/api/products`
-- **Detail Produk**: `http://ukirebackend.test/api/products/{id_produk}`
-
----
-
-## ⚠️ Status Terkini & Masalah Diketahui
-
--   **API Dasar**: Endpoint `/api/categories` dan `/api/products` sudah diimplementasikan.
--   **Filament Admin**: Dashboard untuk manajemen Kategori dan Produk sudah berfungsi.
--   **Masalah `404 Not Found` pada API**: Terkadang muncul saat mengakses via `ukirebackend.test/api/...`. Ini kemungkinan masalah konfigurasi `mod_rewrite` di Apache/Nginx. ***Workaround***: Gunakan `php artisan serve` untuk sementara.
--   **Error `httpd.exe - Entry Point Not Found`**: Terjadi jika menggunakan PHP 8.4 dengan Apache di Laragon. **Solusi**: Ganti versi PHP ke `8.2` atau `8.3` di Laragon.
--   **Komponen `->mask()` di Filament**: Telah dihapus sementara dari input harga produk karena menyebabkan error. Input harga tetap `numeric` dan memiliki prefix.
+- **Via Laragon**: `http://ukirebackend.test/admin`, atau login menggunakan akun dengan role admin di web ukire.
 
 ---
 
